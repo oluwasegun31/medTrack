@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body{
+    max-width: 1440px;
+    margin: 0 auto;
+    background-color: #1D1542;
+    font-family: "Aspekta";
+}
+/* Hide spin buttons for all browsers except Chrome, Safari, Edge, and Opera */
+input[type="number"] {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    appearance: none;
+}
+  /* Hide arrow buttons for Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
