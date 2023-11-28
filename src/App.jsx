@@ -13,34 +13,51 @@ import {
   SignupPage,
 } from "./pages";
 import RootLayout from "./layout/RootLayout";
-import { FormProvider } from "./context";
+import { FormProvider, OtpProvider } from "./context";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="signin">
-          <Route
-            index
-            element={
-              <FormProvider>
-                <SigninPage />
-              </FormProvider>
-            }
-          />
-          <Route path="forgot-password" element={<ForgotPassword />} />
-        </Route>
-        <Route path="signup">
-          <Route
-            index
-            element={
-              <FormProvider>
-                <SignupPage />
-              </FormProvider>
-            }
-          />
-          <Route path="confirm-email" element={<ConfirmEmail />} />
+        {/* Authentication routes sign up, login, confirm email, forgot password */}
+        <Route path="auth">
+          <Route path="signin">
+            <Route
+              index
+              element={
+                <FormProvider>
+                  <SigninPage />
+                </FormProvider>
+              }
+            />
+            <Route
+              path="forgot-password"
+              element={
+                <OtpProvider>
+                  <ForgotPassword />
+                </OtpProvider>
+              }
+            />
+          </Route>
+          <Route path="signup">
+            <Route
+              index
+              element={
+                <FormProvider>
+                  <SignupPage />
+                </FormProvider>
+              }
+            />
+            <Route
+              path="confirm-email"
+              element={
+                <OtpProvider>
+                  <ConfirmEmail />
+                </OtpProvider>
+              }
+            />
+          </Route>
         </Route>
       </Route>
     )

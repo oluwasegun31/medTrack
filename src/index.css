@@ -6,6 +6,7 @@ body{
     margin: 0 auto;
     background-color: #1D1542;
     font-family: "Aspekta";
+    position: relative;
 }
 /* Hide spin buttons for all browsers except Chrome, Safari, Edge, and Opera */
 input[type="number"] {
@@ -18,4 +19,21 @@ input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+/* Hide see button for all browser */
+/* For modern browsers */
+input[type="password"]::-webkit-visible-password {
+    display: none;
+}
+/* For Firefox */
+input[type="password"]::-moz-visible-password {
+    display: none;
+}  
+/* For Internet Explorer */
+  input[type="password"]::-ms-reveal {
+    display: none;
+}  
+/* Standard */
+input[type="password"]::-ms-clear {
+    display: none;
 }

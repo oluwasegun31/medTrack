@@ -1,50 +1,22 @@
-import { useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { otpverifError, verifyOtp } from "../authentication/otpVerification";
-import loadingImg from "../assets/loadingImg.svg";
+import { OtpComponent, OtpError } from "../components";
+import { OtpContext } from "../context";
+import { useContext } from "react";
 
 export default function ConfirmEmail() {
-  const location = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [otpField, setOtpField] = useState(["", "", "", "", ""]);
-  const otpInputs = useRef([]);
-  // function that handle the input of field
-  const handleChange = (e, index) => {
-    const value = e.target.value;
-    if (!isNaN(value) && value !== "") {
-      const newOtp = [...otpField];
-      newOtp[index] = value;
-      setOtpField(newOtp);
+  const location = useLocation();
+  const { setIsLoading, isError, setIsError, otpField } =
+    useContext(OtpContext);
 
-      if (index < otpField.length - 1) {
-        otpInputs.current[index + 1].focus();
-      }
-    }
-  };
-  // function that handle removing input on backspace
-  const handleKeyDown = (e, index) => {
-    // Delete the previous digit if Backspace is pressed and the current input is empty
-    if (e.key === "Backspace" && otpField[index] === "" && index > 0) {
-      const newOtp = [...otpField];
-      newOtp[index - 1] = "";
-      setOtpField(newOtp);
-      otpInputs.current[index - 1].focus();
-    }
-    // Delete the current digit if Backspace is pressed and the current input is not empty
-    if (e.key === "Backspace" && otpField[index] !== "") {
-      const newOtp = [...otpField];
-      newOtp[index] = "";
-      setOtpField(newOtp);
-    }
-    // Focus on the previous input if the current one is empty and Backspace is pressed
-    if (e.key === "Backspace" && index > 0 && otpField[index] === "") {
-      otpInputs.current[index - 1].focus();
-    }
-  };
+  // if access page directly redirect to sign up
+  if (!location.state) {
+    return <Navigate to={"/auth/signup"} replace={true} />;
+  }
+
   // function to handle submiting the otp and logic behind it
   const submitOtp = async () => {
-    console.log(location);
     setIsLoading(true);
     let result = "";
     otpField.forEach((item) => {
@@ -52,14 +24,15 @@ export default function ConfirmEmail() {
     });
     const otp = parseInt(result);
     if (result.length === 5) {
-      const email = location.state.email;
-      const userType = location.state.userType;
+      const email = location.state?.email;
+      const userType = location.state?.userType;
       const success = await verifyOtp(email, userType, otp);
-      success ? console.log("successful") : console.error(otpverifError);
+      success ? console.log("successful") : setIsError(true);
       setIsLoading(false);
     } else {
-      console.error("incomplete");
+      setIsLoading(false);
     }
+    setTimeout(() => setIsError(null), 4000);
   };
 
   return (
@@ -92,46 +65,8 @@ export default function ConfirmEmail() {
         </svg>
         <p>Back</p>
       </div>
-      <section className="sm:px-7 px-5 sm:py-9 py-7 bg-primary-200 w-full rounded-2xl flex flex-col justify-start items-start gap-6 text-white">
-        <p className="md:text-3xl text-[20px] font-bold">
-          Check your message box
-        </p>
-        <p className="md:text-base text-sm font-normal">
-          Enter the 5 digit code sent to (to****@gmail.com)
-        </p>
-        <div className="grid grid-cols-5 sm:gap-6 gap-2 mx-auto">
-          {otpField.map((digit, index) => {
-            return (
-              <input
-                type="number"
-                className="sm:w-[65px] w-[50px] sm:h-[65px] h-[50px] px-4 outline-none bg-primary-400 text-center sm:text-2xl text-lg"
-                max={1}
-                min={0}
-                placeholder="*"
-                key={index}
-                value={digit}
-                onChange={(e) => handleChange(e, index)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-                ref={(input) => (otpInputs.current[index] = input)}
-              />
-            );
-          })}
-        </div>
-        <button
-          type="button"
-          className="w-full p-3 bg-tertiary-200 text-primary-400 font-[700] rounded-[36px] cursor-pointer hover:bg-secondary/75 transition-all duration-300 flex justify-center items-center gap-3"
-          onClick={submitOtp}
-        >
-          continue
-          {isLoading && (
-            <img
-              src={loadingImg}
-              alt="loading.."
-              className="animate-spin w-6 object-contain"
-            />
-          )}
-        </button>
-      </section>
+      <OtpComponent submitOtp={submitOtp} />
+      {isError && <OtpError message={otpverifError} />}
     </section>
   );
 }

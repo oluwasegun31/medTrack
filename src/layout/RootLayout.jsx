@@ -1,11 +1,21 @@
-import { Outlet } from "react-router-dom";
-
+import { Outlet, useNavigate } from "react-router-dom";
+/**
+ * RootLayout component serves as the main layout for the application.
+ * It includes a navigation header and renders the content of the current route.
+ * @component
+ * @returns {JSX.Element} JSX element representing the RootLayout.
+ */
 export default function RootLayout() {
+  const navigate = useNavigate();
+
   return (
     <>
       <header className="md:px-0 px-4">
-        <nav className="w-full max-w-[1440px] mx-auto flex md:justify-between justify-center items-center p-4 md:border-b-0 border-b border-b-primary-100">
-          <section className="flex justify-start items-center gap-2">
+        <nav className="w-full max-w-[1440px] mx-auto flex md:justify-between justify-center items-center px-4 py-6 md:border-b-0 border-b border-b-primary-100">
+          <section
+            className="flex justify-start items-center gap-2 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="28"
